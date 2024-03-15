@@ -41,23 +41,15 @@ flightRouter.route('/flight/add')
 // Route for Update Flight
 flightRouter.route('/flight/update/:flightId')
 .put((req, res, next) => {
-    Flight.findById(req.params.flightId)
+    Flight.findByIdAndUpdate(req.params.flightId, {
+        $set: req.body
+    }, { new: true })
     .then(flight => {
-        if(flight && flight.id(req.params.flightId)) {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(flight.id(req.params.flightId));
-        } else if (!flight) {
-            err = new Error(`Comment ${req.params.flightId} not found`);
-            err.status = 404;
-            return next(err)
-        } else {
-            err = new Error(`Flight ${req.params.flightId} not found`);
-            err.status = 404;
-            return next(err)
-        }
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(flight);
     })
-    .catch(err => next(err))
+    .catch(err => next(err));
 })
 
 module.exports = flightRouter;

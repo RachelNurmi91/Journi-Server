@@ -1,22 +1,22 @@
 const express = require('express');
-const Hotel = require('../models/hotel')
+const Trip = require('../models/trip')
 
-const hotelRouter = express.Router()
+const tripRouter = express.Router()
 
-// Route for Hotel List
-hotelRouter.route('/')
+// Route for Trip List
+tripRouter.route('/')
 .get((req, res, next) => {
-    Hotel.find()
-    .then(hotels => {
+    Trip.find()
+    .then(trips => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         // res.json will send the client json and end find
-        res.json(hotels)
+        res.json(trips)
     })
     .catch(err => next(err))
 })
 .delete((req, res, next) => {
-    Hotel.deleteMany()
+    Trip.deleteMany()
     .then(response => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -25,31 +25,31 @@ hotelRouter.route('/')
     .catch(err => next(err));
 })
 
-// Route for the Add Hotel
-hotelRouter.route('/add')
+// Route for the Add Trip
+tripRouter.route('/add')
 .post((req, res, next) => {
-    Hotel.create(req.body)
-    .then(hotel => {
-        console.log('Hotel Reservation created.')
+    Trip.create(req.body)
+    .then(trip => {
+        console.log('Trip created.')
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(hotel)
+        res.json(trip)
     })
     .catch(err => next(err))
 })
 
-// Route for Update Hotel
-hotelRouter.route('/hotel/update/:hotelId')
+// Route for Update Trip
+tripRouter.route('/:tripId')
 .put((req, res, next) => {
-    Hotel.findByIdAndUpdate(req.params.hotelId, {
+    Trip.findByIdAndUpdate(req.params.tripId, {
         $set: req.body
     }, { new: true })
-    .then(hotel => {
+    .then(trip => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(hotel);
+        res.json(trip);
     })
     .catch(err => next(err));
 })
 
-module.exports = hotelRouter;
+module.exports = tripRouter;

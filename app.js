@@ -2,6 +2,7 @@ var express = require('express');
 const morgan = require('morgan')
 const hotelRouter = require('./routes/hotelRouter');
 const flightRouter = require('./routes/flightRouter');
+const tripRouter = require('./routes/tripRouter');
 
 const hostname = 'localhost';
 const port = '3000';
@@ -32,6 +33,7 @@ app.use(express.json());
 
 app.use('/hotels', hotelRouter);
 app.use('/flights', flightRouter);
+app.use('/trips', tripRouter);
 
 //Allows Morgan to serve files from the public folder.
 //__dirname is a Node variable that refers to the absolute path of the directory of the file its in.

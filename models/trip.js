@@ -8,7 +8,7 @@ const tripSchema = new Schema({
     },
     departure: {
         type: Date,
-        required: true,
+        // required: true,
     },
     }, {
         timestamps: true
