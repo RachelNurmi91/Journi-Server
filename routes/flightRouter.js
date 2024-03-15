@@ -15,18 +15,10 @@ flightRouter.route('/')
     })
     .catch(err => next(err))
 })
-.delete((req, res, next) => {
-    Flight.deleteMany()
-    .then(response => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(response);
-    })
-    .catch(err => next(err));
-})
+
 
 // Route for the Add Flight
-flightRouter.route('/flight/add')
+flightRouter.route('/add')
 .post((req, res, next) => {
     Flight.create(req.body)
     .then(flight => {
@@ -39,11 +31,20 @@ flightRouter.route('/flight/add')
 })
 
 // Route for Update Flight
-flightRouter.route('/flight/update/:flightId')
+flightRouter.route('/:flightId')
 .put((req, res, next) => {
     Flight.findByIdAndUpdate(req.params.flightId, {
         $set: req.body
     }, { new: true })
+    .then(flight => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(flight);
+    })
+    .catch(err => next(err));
+})
+.delete((req, res, next) => {
+    Flight.findByIdAndDelete(req.params.flightId)
     .then(flight => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');

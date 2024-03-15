@@ -51,5 +51,14 @@ hotelRouter.route('/hotel/update/:hotelId')
     })
     .catch(err => next(err));
 })
+.delete((req, res, next) => {
+    Hotel.findByIdAndDelete(req.params.hotelId)
+    .then(hotel => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(hotel);
+    })
+    .catch(err => next(err));
+})
 
 module.exports = hotelRouter;

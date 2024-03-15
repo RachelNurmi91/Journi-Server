@@ -15,15 +15,6 @@ tripRouter.route('/')
     })
     .catch(err => next(err))
 })
-.delete((req, res, next) => {
-    Trip.deleteMany()
-    .then(response => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(response);
-    })
-    .catch(err => next(err));
-})
 
 // Route for the Add Trip
 tripRouter.route('/add')
@@ -51,5 +42,15 @@ tripRouter.route('/:tripId')
     })
     .catch(err => next(err));
 })
+.delete((req, res, next) => {
+    Trip.findByIdAndDelete(req.params.tripId)
+    .then(trip => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(trip);
+    })
+    .catch(err => next(err));
+})
+
 
 module.exports = tripRouter;
