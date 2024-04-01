@@ -11,21 +11,21 @@ userRouter.get("/", function (req, res, next) {
 });
 
 userRouter.post("/signup", (req, res) => {
-  const { username, firstname, lastname, email, password } = req.body;
+  const { username, firstName, lastName, email, password } = req.body;
   User.register(
-    { username, firstname, lastname, email },
+    { username, firstName, lastName, email },
     password,
     (err, newUser) => {
       if (err) {
         console.log("Error: ", err);
-        // Status code 500 is 'interal server error'.
+        // Status code 500 is 'internal server error'.
         return res.status(500).json({ err: err });
       } else {
-        if (req.body.firstname) {
-          newUser.firstName = req.body.firstname;
+        if (req.body.firstName) {
+          newUser.firstName = req.body.firstName;
         }
-        if (req.body.lastname) {
-          newUser.lastName = req.body.lastname;
+        if (req.body.lastName) {
+          newUser.lastName = req.body.lastName;
         }
         if (req.body.email) {
           newUser.email = req.body.email;
@@ -36,12 +36,10 @@ userRouter.post("/signup", (req, res) => {
             return res.status(500).json({ err: err });
           } else {
             passport.authenticate("local")(req, res, () => {
-              return res
-                .status(200)
-                .json({
-                  success: true,
-                  status: "Your registration was successful!",
-                });
+              return res.status(200).json({
+                success: true,
+                status: "Your registration was successful!",
+              });
             });
           }
         });

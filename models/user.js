@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose');
+const mongoose = require("mongoose");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const Schema = mongoose.Schema;
 
@@ -79,40 +79,46 @@ const Schema = mongoose.Schema;
 //         timestamps: true
 // });
 
-// const tripSchema = new Schema({
-//     tripName: {
-//         type: String,
-//         required: true,
-//     },
-//     departureDate: {
-//         type: Date,
-//         required: true,
-//     },
-//     hotels: [hotelSchema],
-//     flights: [flightSchema],
-// }, {
-//     timestamps: true
-// })
-
-const userSchema = new Schema({
-    firstname: {
-        type: String,
-        required: true,
+const tripSchema = new Schema(
+  {
+    tripName: {
+      type: String,
+      required: true,
     },
-    lastname: {
-        type: String,
-        required: true,
+    departureDate: {
+      type: Date,
+      required: true,
+    },
+    // hotels: [hotelSchema],
+    // flights: [flightSchema],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const userSchema = new Schema(
+  {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    // trips: [tripSchema],
-    }, {
-        timestamps: true
-});
+    trips: [tripSchema],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 // This plugs passportLocalMongoose into userScheam
 userSchema.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model("User", userSchema);

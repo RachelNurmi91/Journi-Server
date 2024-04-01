@@ -36,5 +36,5 @@ exports.jwtPassport = passport.use(
   })
 );
 
-// Session false disabes session based auth since JWT is stateless.
+// Session false disables session based auth since JWT is stateless.
 exports.verifyUser = passport.authenticate("jwt", { session: false });
