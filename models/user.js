@@ -32,24 +32,27 @@ const Schema = mongoose.Schema;
 //         timestamps: true
 // })
 
-// const flightSchema = new Schema({
-//     type: {
-//         type: String,
-//         required: true,
-//     },
-//     airline: {
-//         type: String,
-//         required: true,
-//     },
-//     departureFlight: [flightDetailsSchema],
-//     returnFlight: [flightDetailsSchema],
-//     ticketHolder: {
-//         type: String,
-//         required: true,
-//     },
-//     }, {
-//         timestamps: true
-// });
+const flightSchema = new Schema(
+  {
+    type: {
+      type: String,
+      required: true,
+    },
+    airline: {
+      type: String,
+      required: true,
+    },
+    // departureFlight: [flightDetailsSchema],
+    // returnFlight: [flightDetailsSchema],
+    ticketHolder: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 // const hotelSchema = new Schema({
 //     arrival: {
@@ -90,7 +93,7 @@ const tripSchema = new Schema(
       required: true,
     },
     // hotels: [hotelSchema],
-    // flights: [flightSchema],
+    flights: [flightSchema],
   },
   {
     timestamps: true,

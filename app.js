@@ -8,6 +8,7 @@ const config = require("./config");
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/userRouter");
 const tripRouter = require("./routes/tripRouter");
+const flightRouter = require("./routes/flightRouter");
 
 const mongoose = require("mongoose");
 
@@ -49,6 +50,7 @@ app.use(express.static(__dirname + "/public"));
 
 // Routes here require login.
 app.use("/trips", tripRouter);
+app.use("/flights", flightRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
