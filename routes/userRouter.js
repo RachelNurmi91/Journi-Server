@@ -11,16 +11,12 @@ userRouter.get('/', function(req, res, next) {
 });
 
 userRouter.post('/signup', (req, res) => {
-  User.register(
-    new User({ username: req.body.username}),
-    req.body.password,
-    (err, newUser) => {
+  const {username, firstname, lastname, email,password} = req.body;
+ User.register({ username, firstname, lastname, email }, password, (err, newUser) => {
       if (err) {
         console.log('Error: ', err)
         // Status code 500 is 'interal server error'.
-        res.statusCode = 500;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({err: err})
+        return res.status(500).json({err: err})
       } else {
         if (req.body.firstname) {
           newUser.firstName = req.body.firstname;
@@ -31,17 +27,19 @@ userRouter.post('/signup', (req, res) => {
         if (req.body.email) {
           newUser.email = req.body.email;
         }
+
         newUser.save(err => {
-          res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({err: err});
-          return;
-        })
-        passport.authenticate('local')(req, res, () => {
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({success: true, status: 'Registration was successful!'});
+          if (err) {
+            return res.status(500).json({err: err});
+          } else {
+              passport.authenticate('local')(req, res, () => {
+          return res.status(200).json({success: true, status: "Your registration was successful!"})
         });
+          }
+          
+        })
+
+      
       }
     }
   )
