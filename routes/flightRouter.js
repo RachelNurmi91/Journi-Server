@@ -155,7 +155,7 @@ flightRouter
             .json({ message: "Unauthorized: User not found" });
 
         const tripIndex = user.trips.findIndex((trip) => {
-          return trip.flights.some(
+          return trip.flights.find(
             (flight) => flight._id.toString() === req.params.flightId
           );
         });

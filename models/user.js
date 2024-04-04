@@ -54,33 +54,36 @@ const flightSchema = new Schema(
   }
 );
 
-// const hotelSchema = new Schema({
-//     arrival: {
-//         type: Date,
-//         required: true,
-//     },
-//     departure: {
-//         type: Date,
-//         required: true,
-//     },
-//     name: {
-//         type: String,
-//         required: true,
-//     },
-//     confirmation: {
-//         type: String,
-//     },
-//     city: {
-//         type: String,
-//         required: true,
-//     },
-//     country: {
-//         type: String,
-//         required: true,
-//     }
-//     }, {
-//         timestamps: true
-// });
+const hotelSchema = new Schema(
+  {
+    arrival: {
+      type: Date,
+      required: true,
+    },
+    departure: {
+      type: Date,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    confirmation: {
+      type: String,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const tripSchema = new Schema(
   {
@@ -92,7 +95,7 @@ const tripSchema = new Schema(
       type: Date,
       required: true,
     },
-    // hotels: [hotelSchema],
+    hotels: [hotelSchema],
     flights: [flightSchema],
   },
   {
