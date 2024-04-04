@@ -1,26 +1,35 @@
 const express = require("express");
-const User = require("../models/user");
 const authenticate = require("../authenticate");
+const User = require("../models/user");
 
 const flightRouter = express.Router();
 
-// Route for Flight List
+// ---- ROUTE FOR OBTAINING A TRIP'S FLIGHT LIST ---- //
 flightRouter
   .route("/")
   .get(authenticate.verifyUser, (req, res, next) => {
-    console.log(req.user);
-    if (!req.user) {
-      return res.status(404).json({ message: "Unauthorized: User not found" });
-    } else {
-      const trip = req.user.trips.id(req.params.tripId);
-      if (!trip) {
-        return res
-          .status(404)
-          .json({ message: "Unauthorized: Trip not found" });
-      } else {
+    // Flights are trip based, not user based.
+    // The request body must contain a specified tripId.
+
+    User.findById(req.user._id)
+      .then((user) => {
+        if (!user)
+          return res
+            .status(404)
+            .json({ message: "Unauthorized: User not found" });
+
+        // Search the trips for an id that matches our request.
+
+        const trip = req.user.trips.id(req.body.tripId);
+
+        if (!trip)
+          return res
+            .status(404)
+            .json({ message: "Unauthorized: Trip not found" });
+
         res.status(200).json(trip.flights);
-      }
-    }
+      })
+      .catch((err) => next(err));
   })
   .post(authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("POST operation not supported on /flights");
@@ -32,37 +41,41 @@ flightRouter
     res.status(403).send("DELETE operation not supported on /flights");
   });
 
-// Route for the Add Flight
+// ---- ROUTE FOR ADDING A FLIGHT TO A TRIP ---- //
 flightRouter
-  .route("/:tripId/add")
+  .route("/add")
   .get(authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("GET operation not supported on /flights/add");
   })
   .post(authenticate.verifyUser, (req, res, next) => {
-    const { type, airline, ticketHolder } = req.body;
+    // To add a flight the request body must contain a the id of the trip it will be added to.
+
+    const { type, airline, ticketHolder, tripId } = req.body;
     const newFlight = { type, airline, ticketHolder };
-    if (!req.user) {
-      return res.status(404).json({ message: "Unauthorized: User not found" });
-    }
 
-    const tripIndex = req.user.trips.findIndex(
-      (trip) => trip._id.toString() === req.params.tripId
-    );
+    User.findById(req.user._id).then((user) => {
+      if (!user)
+        return res
+          .status(404)
+          .json({ message: "Unauthorized: User not found" });
 
-    if (tripIndex === -1) {
-      return res.status(404).json({ message: "Trip not found" });
-    } else {
-      req.user.trips[tripIndex].flights.push(newFlight);
-      req.user
+      const trip = user.trips.id(tripId);
+      if (!trip)
+        return res.status(404).json({ message: "Error: Trip not found" });
+
+      trip.flights.push(newFlight);
+
+      user
         .save()
         .then((user) => {
-          const addedFlight = user.trips[tripIndex].flights.slice(-1);
-          res.status(200).json(addedFlight);
+          const newFlight = user.trips.id(tripId).flights.slice(-1);
+          res.status(200).json({
+            message: "Success: Flight saved successfully",
+            newFlight,
+          });
         })
         .catch((err) => next(err));
-    }
-
-    // console.log(tripId);
+    });
   })
   .put(authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /flights/add");
@@ -71,30 +84,100 @@ flightRouter
     res.status(403).send("DELETE operation not supported on /flights/add");
   });
 
-// Route for Update Flight
+// ---- ROUTE FOR AN INDIVIDUAL FLIGHT ---- //
 flightRouter
   .route("/:flightId")
+
+  // At this point the flightId will be in the url of the req.
+  // Since we are focused on the individual flight we do not need the tripId sent over in the req body.
+
+  .get(authenticate.verifyUser, (req, res, next) => {
+    res
+      .status(403)
+      .send(`GET operation not supported on /flights/${req.params.flightId}`);
+  })
   .put(authenticate.verifyUser, (req, res, next) => {
-    Flight.findByIdAndUpdate(
-      req.params.flightId,
+    const { type, airline, ticketHolder } = req.body;
+    User.findOneAndUpdate(
+      { "trips.flights._id": req.params.flightId },
       {
-        $set: req.body,
+        $set: {
+          "trips.$[i].flights.$[x].type": type,
+          "trips.$[i].flights.$[x].airline": airline,
+          "trips.$[i].flights.$[x].ticketHolder": ticketHolder,
+        },
       },
-      { new: true }
+      {
+        arrayFilters: [
+          { "i.flights._id": req.params.flightId },
+          { "x._id": req.params.flightId },
+        ],
+        new: true,
+      }
     )
       .then((flight) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(flight);
+        if (!flight)
+          return res.status(404).json({ message: "Error: Flight not found" });
+        flight
+          .save()
+          .then((user) => {
+            let updatedFlight;
+
+            user.trips.forEach((trip) => {
+              trip.flights.forEach((flight) => {
+                if (flight._id.toString() === req.params.flightId) {
+                  updatedFlight = flight;
+                  return;
+                }
+              });
+            });
+
+            res.status(200).json({
+              message: "Success: Flight update saved successfully",
+              updatedFlight,
+            });
+          })
+          .catch((err) => next(err));
       })
       .catch((err) => next(err));
   })
+  .post(authenticate.verifyUser, (req, res, next) => {
+    res
+      .status(403)
+      .send(`POST operation not supported on /flights/${req.params.flightId}`);
+  })
   .delete(authenticate.verifyUser, (req, res, next) => {
-    Flight.findByIdAndDelete(req.params.flightId)
-      .then((flight) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(flight);
+    User.findById(req.user._id)
+      .then((user) => {
+        if (!user)
+          return res
+            .status(404)
+            .json({ message: "Unauthorized: User not found" });
+
+        const tripIndex = user.trips.findIndex((trip) => {
+          return trip.flights.some(
+            (flight) => flight._id.toString() === req.params.flightId
+          );
+        });
+
+        if (tripIndex === -1)
+          return res.status(404).json({ message: "Error: Flight not found" });
+
+        user.trips[tripIndex].flights = user.trips[tripIndex].flights.filter(
+          (flight) => flight._id.toString() !== req.params.flightId
+        );
+
+        user
+          .save()
+          .then((user) => {
+            let updatedTrip = user.trips[tripIndex];
+
+            res.status(200).json({
+              message: "Success: Flight deleted successfully",
+              updatedTrip,
+            });
+          })
+          .catch((err) => next(err));
       })
       .catch((err) => next(err));
   });
