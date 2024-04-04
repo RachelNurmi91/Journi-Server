@@ -50,8 +50,9 @@ hotelRouter
   .post(authenticate.verifyUser, (req, res, next) => {
     // To add a hotel the request body must contain a the id of the trip it will be added to.
 
-    const { type, airline, ticketHolder, tripId } = req.body;
-    const newHotel = { type, airline, ticketHolder };
+    const { arrivalDate, departureDate, hotel, city, country, tripId } =
+      req.body;
+    const newHotel = { arrivalDate, departureDate, hotel, city, country };
 
     User.findById(req.user._id).then((user) => {
       if (!user)
@@ -97,14 +98,16 @@ hotelRouter
       .send(`GET operation not supported on /hotels/${req.params.hotelId}`);
   })
   .put(authenticate.verifyUser, (req, res, next) => {
-    const { type, airline, ticketHolder } = req.body;
+    const { arrivalDate, departureDate, hotel, city, country } = req.body;
     User.findOneAndUpdate(
       { "trips.hotels._id": req.params.hotelId },
       {
         $set: {
-          "trips.$[i].hotels.$[x].type": type,
-          "trips.$[i].hotels.$[x].airline": airline,
-          "trips.$[i].hotels.$[x].ticketHolder": ticketHolder,
+          "trips.$[i].hotels.$[x].arrivalDate": arrivalDate,
+          "trips.$[i].hotels.$[x].departureDate": departureDate,
+          "trips.$[i].hotels.$[x].hotel": hotel,
+          "trips.$[i].hotels.$[x].city": city,
+          "trips.$[i].hotels.$[x].country": country,
         },
       },
       {

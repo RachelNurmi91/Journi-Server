@@ -56,15 +56,15 @@ const flightSchema = new Schema(
 
 const hotelSchema = new Schema(
   {
-    arrival: {
+    arrivalDate: {
       type: Date,
       required: true,
     },
-    departure: {
+    departureDate: {
       type: Date,
       required: true,
     },
-    name: {
+    hotel: {
       type: String,
       required: true,
     },
