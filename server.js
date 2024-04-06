@@ -28,6 +28,7 @@ connect.then(
 
 //The express() method returns an express server application
 const app = express();
+const PORT = process.env.PORT || 8080;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -69,5 +70,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+app.listen(PORT, console.log(`Server is running at ${PORT}`));
 
 module.exports = app;
