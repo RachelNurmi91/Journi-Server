@@ -1,13 +1,15 @@
 const express = require("express");
 const authenticate = require("../authenticate");
 const User = require("../models/user");
+const cors = require("./cors");
 
 const flightRouter = express.Router();
 
 // ---- ROUTE FOR OBTAINING A TRIP'S FLIGHT LIST ---- //
 flightRouter
   .route("/")
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     // Flights are trip based, not user based.
     // The request body must contain a specified tripId.
 
@@ -31,25 +33,26 @@ flightRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("POST operation not supported on /flights");
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /flights");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("DELETE operation not supported on /flights");
   });
 
 // ---- ROUTE FOR ADDING A FLIGHT TO A TRIP ---- //
 flightRouter
   .route("/add")
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("GET operation not supported on /flights/add");
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a flight the request body must contain a the id of the trip it will be added to.
-
+    console.log("hit");
     const { type, airline, ticketHolder, tripId } = req.body;
     const newFlight = { type, airline, ticketHolder };
 
@@ -77,10 +80,10 @@ flightRouter
         .catch((err) => next(err));
     });
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /flights/add");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("DELETE operation not supported on /flights/add");
   });
 
@@ -90,13 +93,13 @@ flightRouter
 
   // At this point the flightId will be in the url of the req.
   // Since we are focused on the individual flight we do not need the tripId sent over in the req body.
-
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
       .send(`GET operation not supported on /flights/${req.params.flightId}`);
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     const { type, airline, ticketHolder } = req.body;
     User.findOneAndUpdate(
       { "trips.flights._id": req.params.flightId },
@@ -141,12 +144,12 @@ flightRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
       .send(`POST operation not supported on /flights/${req.params.flightId}`);
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.user._id)
       .then((user) => {
         if (!user)

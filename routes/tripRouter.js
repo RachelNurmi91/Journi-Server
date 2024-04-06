@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/user");
 const authenticate = require("../authenticate");
+const cors = require("./cors");
 
 const tripRouter = express.Router();
 
@@ -31,18 +32,19 @@ tripRouter
 // Route for the Add Trip
 tripRouter
   .route("/add")
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   // The '/trips/add' route is only for adding new trips.
   // All requests except POST will return status code 403 ('Forbidden')
   .get(authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("GET operation not supported on /trips/add");
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     const { tripName, departureDate } = req.body;
     const newTrip = { tripName, departureDate };
     if (!req.user) {
       // Only logged in users can send a 'POST' request.
       // If the request doesn't have a logged in user we will send a 401 ('Unauthorized')
-      return res.status(404).json({ message: "Unauthorized: User not found" });
+      return res.status(401).json({ message: "Unauthorized: User not found" });
     } else {
       req.user.trips.push(newTrip);
       req.user

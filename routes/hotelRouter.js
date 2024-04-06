@@ -1,13 +1,15 @@
 const express = require("express");
 const authenticate = require("../authenticate");
 const User = require("../models/user");
+const cors = require("./cors");
 
 const hotelRouter = express.Router();
 
 // ---- ROUTE FOR OBTAINING A TRIP'S HOTEL LIST ---- //
 hotelRouter
   .route("/")
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     // Hotels are trip based, not user based.
     // The request body must contain a specified tripId.
 
@@ -31,25 +33,25 @@ hotelRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("POST operation not supported on /hotels");
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /hotels");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("DELETE operation not supported on /hotels");
   });
 
 // ---- ROUTE FOR ADDING A HOTEL TO A TRIP ---- //
 hotelRouter
   .route("/add")
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("GET operation not supported on /hotels/add");
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a hotel the request body must contain a the id of the trip it will be added to.
-
     const { arrivalDate, departureDate, hotel, city, country, tripId } =
       req.body;
     const newHotel = { arrivalDate, departureDate, hotel, city, country };
@@ -78,10 +80,10 @@ hotelRouter
         .catch((err) => next(err));
     });
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /hotels/add");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("DELETE operation not supported on /hotels/add");
   });
 
