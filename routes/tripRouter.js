@@ -8,7 +8,8 @@ const tripRouter = express.Router();
 // Route for Trip List
 tripRouter
   .route("/")
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     User.find()
       .then((trips) => {
         // The res.json line will send the client JSON and end the find function.
@@ -19,13 +20,13 @@ tripRouter
   })
   // The '/trips' route is only for viewing trips.
   // For the rest of the requests we will return status code 403 ('Forbidden')
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("POST operation not supported on /trips");
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /trips");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("DELETE operation not supported on /trips");
   });
 
@@ -35,7 +36,7 @@ tripRouter
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   // The '/trips/add' route is only for adding new trips.
   // All requests except POST will return status code 403 ('Forbidden')
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("GET operation not supported on /trips/add");
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
@@ -56,27 +57,28 @@ tripRouter
         .catch((err) => next(err));
     }
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /trips/add");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("DELETE operation not supported on /trips/add");
   });
 
 // Route for Update Trip
 tripRouter
   .route("/:tripId")
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
       .send(`GET operation not supported on /trips/${req.params.tripId}`);
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
       .send(`POST operation not supported on /trips/${req.params.tripId}`);
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     if (!req.user) {
       return res.status(404).json({ message: "Unauthorized: User not found" });
     } else {
@@ -99,13 +101,14 @@ tripRouter
         .catch((err) => next(err));
     }
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     if (!req.user) {
       return res.status(404).json({ message: "Unauthorized: User not found" });
     } else {
       const tripIndex = req.user.trips.findIndex(
         (trip) => trip._id.toString() === req.params.tripId
       );
+      console.log(tripIndex);
       if (tripIndex === -1) {
         return res.status(404).json({ message: "Trip not found" });
       } else {
