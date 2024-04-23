@@ -108,18 +108,18 @@ tripRouter
       const tripIndex = req.user.trips.findIndex(
         (trip) => trip._id.toString() === req.params.tripId
       );
-      console.log(tripIndex);
+
       if (tripIndex === -1) {
         return res.status(404).json({ message: "Trip not found" });
       } else {
         req.user.trips.splice(tripIndex, 1);
-        req.user
-          .save()
-          .then((user) => {
-            const deletedTrip = user.trips[tripIndex];
-            res.status(200).json(deletedTrip);
-          })
-          .catch((err) => next(err));
+        req.user.save((err, user) => {
+          if (err) {
+            return next(err);
+          }
+          const deletedTrip = user.trips[tripIndex];
+          res.status(200).json(deletedTrip);
+        });
       }
     }
   });

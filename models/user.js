@@ -3,34 +3,35 @@ const passportLocalMongoose = require("passport-local-mongoose");
 
 const Schema = mongoose.Schema;
 
-// const flightDetailsSchema = new Schema({
-//     airport: {
-//         type: String,
-//         required: true,
-//     },
-//     code: {
-//         type: String,
-//         required: true,
-//     },
-//     city: {
-//         type: String,
-//         required: true,
-//     },
-//     country: {
-//         type: String,
-//         required: true,
-//     },
-//     flightNo: {
-//         type: String,
-//         required: true,
-//     },
-//     date: {
-//         type: Date,
-//         required: true,
-//     }
-//     }, {
-//         timestamps: true
-// })
+const flightDetailsSchema = new Schema(
+  {
+    airport: {
+      type: String,
+    },
+    code: {
+      type: String,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+    },
+    flightNo: {
+      type: String,
+    },
+    seatNo: {
+      type: String,
+    },
+    date: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const flightSchema = new Schema(
   {
@@ -42,8 +43,11 @@ const flightSchema = new Schema(
       type: String,
       required: true,
     },
-    // departureFlight: [flightDetailsSchema],
-    // returnFlight: [flightDetailsSchema],
+    confirmationNo: {
+      type: String,
+    },
+    departureFlight: [flightDetailsSchema],
+    returnFlight: [flightDetailsSchema],
     ticketHolder: {
       type: String,
       required: true,

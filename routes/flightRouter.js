@@ -53,8 +53,21 @@ flightRouter
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a flight the request body must contain a the id of the trip it will be added to.
     console.log("hit");
-    const { type, airline, ticketHolder, tripId } = req.body;
-    const newFlight = { type, airline, ticketHolder };
+    const {
+      type,
+      airline,
+      ticketHolder,
+      tripId,
+      departureFlight,
+      returnFlight,
+    } = req.body;
+    const newFlight = {
+      type,
+      airline,
+      ticketHolder,
+      departureFlight,
+      returnFlight,
+    };
 
     User.findById(req.user._id).then((user) => {
       if (!user)
