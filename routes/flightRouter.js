@@ -52,12 +52,13 @@ flightRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a flight the request body must contain a the id of the trip it will be added to.
-    console.log("hit");
+    console.log(req.body);
     const {
       type,
       airline,
       ticketHolder,
       tripId,
+      confirmationNo,
       departureFlight,
       returnFlight,
     } = req.body;
@@ -65,6 +66,7 @@ flightRouter
       type,
       airline,
       ticketHolder,
+      confirmationNo,
       departureFlight,
       returnFlight,
     };
@@ -113,7 +115,7 @@ flightRouter
       .send(`GET operation not supported on /flights/${req.params.flightId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { type, airline, ticketHolder } = req.body;
+    const { type, airline, ticketHolder, confirmationNo } = req.body;
     User.findOneAndUpdate(
       { "trips.flights._id": req.params.flightId },
       {
@@ -121,6 +123,7 @@ flightRouter
           "trips.$[i].flights.$[x].type": type,
           "trips.$[i].flights.$[x].airline": airline,
           "trips.$[i].flights.$[x].ticketHolder": ticketHolder,
+          "trips.$[i].flights.$[x].confirmationNo": confirmationNo,
         },
       },
       {

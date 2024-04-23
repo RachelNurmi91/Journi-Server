@@ -21,7 +21,7 @@ const flightDetailsSchema = new Schema(
     flightNo: {
       type: String,
     },
-    seatNo: {
+    seat: {
       type: String,
     },
     date: {
