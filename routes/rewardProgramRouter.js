@@ -69,64 +69,65 @@ rewardProgramRouter
   });
 
 // Route for Update Trip
-// rewardProgramRouter
-//   .route("/:programName")
-//   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-//   .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
-//     res
-//       .status(403)
-//       .send(`GET operation not supported on /trips/${req.params.tripId}`);
-//   })
-//   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-//     res
-//       .status(403)
-//       .send(`POST operation not supported on /trips/${req.params.tripId}`);
-//   })
-//   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-//     if (!req.user) {
-//       return res.status(404).json({ message: "Unauthorized: User not found" });
-//     } else {
-//       User.findOneAndUpdate(
-//         { "trips._id": req.params.tripId },
-//         {
-//           $set: {
-//             "trips.$.tripName": req.body.tripName,
-//             "trips.$.departureDate": req.body.departureDate,
-//           },
-//         },
-//         { new: true }
-//       )
-//         .then((user) => {
-//           const updatedTrip = user.trips.find(
-//             (trip) => trip._id.toString() === req.params.tripId
-//           );
-//           res.status(200).json(updatedTrip);
-//         })
-//         .catch((err) => next(err));
-//     }
-//   })
-//   .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-//     if (!req.user) {
-//       return res.status(404).json({ message: "Unauthorized: User not found" });
-//     } else {
-//       const tripIndex = req.user.trips.findIndex(
-//         (trip) => trip._id.toString() === req.params.tripId
-//       );
+rewardProgramRouter
+  .route("/:programId")
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
+    res
+      .status(403)
+      .send(`GET operation not supported on /trips/${req.params.tripId}`);
+  })
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    res
+      .status(403)
+      .send(`POST operation not supported on /trips/${req.params.tripId}`);
+  })
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    if (!req.user) {
+      return res.status(404).json({ message: "Unauthorized: User not found" });
+    } else {
+      User.findOneAndUpdate(
+        { "trips._id": req.params.tripId },
+        {
+          $set: {
+            "trips.$.tripName": req.body.tripName,
+            "trips.$.departureDate": req.body.departureDate,
+          },
+        },
+        { new: true }
+      )
+        .then((user) => {
+          const updatedTrip = user.trips.find(
+            (trip) => trip._id.toString() === req.params.tripId
+          );
+          res.status(200).json(updatedTrip);
+        })
+        .catch((err) => next(err));
+    }
+  })
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    if (!req.user) {
+      return res.status(404).json({ message: "Unauthorized: User not found" });
+    } else {
+      console.log(req.user.rewardPrograms);
+      const programIndex = req.user.rewardPrograms.findIndex(
+        (program) => program._id.toString() === req.params.programId
+      );
 
-//       if (tripIndex === -1) {
-//         return res.status(404).json({ message: "Trip not found" });
-//       } else {
-//         req.user.trips.splice(tripIndex, 1);
-//         req.user.save((err, user) => {
-//           if (err) {
-//             return next(err);
-//           }
-//           const deletedTrip = user.trips[tripIndex];
-//           res.status(200).json(deletedTrip);
-//         });
-//       }
-//     }
-// });
+      if (programIndex === -1) {
+        return res.status(404).json({ message: "Reward Program not found" });
+      } else {
+        req.user.rewardPrograms.splice(programIndex, 1);
+        req.user.save((err, user) => {
+          if (err) {
+            return next(err);
+          }
+          const deletedProgram = user.rewardPrograms[programIndex];
+          res.status(200).json(deletedProgram);
+        });
+      }
+    }
+  });
 
 //Error handling middleware
 
