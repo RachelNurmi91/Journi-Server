@@ -10,6 +10,7 @@ const userRouter = require("./routes/userRouter");
 const tripRouter = require("./routes/tripRouter");
 const flightRouter = require("./routes/flightRouter");
 const hotelRouter = require("./routes/hotelRouter");
+const rewardProgramRouter = require("./routes/rewardProgramRouter");
 
 const mongoose = require("mongoose");
 
@@ -54,6 +55,7 @@ app.use(express.static(__dirname + "/public"));
 app.use("/trips", tripRouter);
 app.use("/flights", flightRouter);
 app.use("/hotels", hotelRouter);
+app.use("/rewardPrograms", rewardProgramRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

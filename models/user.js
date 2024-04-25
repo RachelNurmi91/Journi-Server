@@ -107,6 +107,22 @@ const tripSchema = new Schema(
   }
 );
 
+const rewardProgramSchema = new Schema(
+  {
+    programName: {
+      type: String,
+      required: true,
+    },
+    membership: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const userSchema = new Schema(
   {
     firstName: {
@@ -117,6 +133,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    rewardPrograms: [rewardProgramSchema],
     trips: [tripSchema],
   },
   {
