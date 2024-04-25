@@ -40,8 +40,8 @@ rewardProgramRouter
     res.status(403).send("GET operation not supported on /rewardPrograms/add");
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { programName, membership } = req.body;
-    const newRewardProgram = { programName, membership };
+    const { programName, membershipId } = req.body;
+    const newRewardProgram = { programName, membershipId };
     if (!req.user) {
       // Only logged in users can send a 'POST' request.
       // If the request doesn't have a logged in user we will send a 401 ('Unauthorized')

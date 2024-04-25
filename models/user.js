@@ -113,7 +113,7 @@ const rewardProgramSchema = new Schema(
       type: String,
       required: true,
     },
-    membership: {
+    membershipId: {
       type: String,
       required: true,
     },
