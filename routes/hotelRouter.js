@@ -90,16 +90,17 @@ hotelRouter
 // ---- ROUTE FOR AN INDIVIDUAL HOTEL ---- //
 hotelRouter
   .route("/:hotelId")
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 
   // At this point the hotelId will be in the url of the req.
   // Since we are focused on the individual hotel we do not need the tripId sent over in the req body.
 
-  .get(authenticate.verifyUser, (req, res, next) => {
+  .get(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
       .send(`GET operation not supported on /hotels/${req.params.hotelId}`);
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     const { arrivalDate, departureDate, hotel, city, country } = req.body;
     User.findOneAndUpdate(
       { "trips.hotels._id": req.params.hotelId },
@@ -146,45 +147,45 @@ hotelRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
-      .send(`POST operation not supported on /hotels/${req.params.hotelId}`);
+      .send(`POST operation not supported on /hotels/${req.params._id}`);
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    User.findById(req.user._id)
-      .then((user) => {
-        if (!user)
-          return res
-            .status(404)
-            .json({ message: "Unauthorized: User not found" });
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    if (!req.user) {
+      return res.status(404).json({ message: "Unauthorized: User not found" });
+    } else {
+      const { hotelId } = req.params;
 
-        const tripIndex = user.trips.findIndex((trip) => {
-          return trip.hotels.some(
-            (hotel) => hotel._id.toString() === req.params.hotelId
-          );
+      let hotelIndex;
+      let tripIndex;
+
+      req.user.trips.forEach((trip, userTripsIndex) => {
+        trip.hotels.forEach((hotel, index) => {
+          if (hotel._id.toString() === hotelId.toString()) {
+            tripIndex = userTripsIndex;
+            hotelIndex = index;
+            return;
+          }
         });
+      });
 
-        if (tripIndex === -1)
-          return res.status(404).json({ message: "Error: Hotel not found" });
-
-        user.trips[tripIndex].hotels = user.trips[tripIndex].hotels.filter(
-          (hotel) => hotel._id.toString() !== req.params.hotelId
-        );
-
-        user
-          .save()
-          .then((user) => {
-            let updatedTrip = user.trips[tripIndex];
-
-            res.status(200).json({
-              message: "Success: Hotel deleted successfully",
-              updatedTrip,
-            });
-          })
-          .catch((err) => next(err));
-      })
-      .catch((err) => next(err));
+      console.log("TRIPS INDEX: ", tripIndex);
+      if (hotelIndex === -1) {
+        return res.status(404).json({ message: "Hotel not found" });
+      } else {
+        console.log(req.user.trips[tripIndex].hotels);
+        req.user.trips[tripIndex].hotels.splice(hotelIndex, 1);
+        req.user.save((err, user) => {
+          if (err) {
+            return next(err);
+          }
+          const deletedHotel = user.trips[tripIndex].hotels[hotelIndex];
+          res.status(200).json(deletedHotel);
+        });
+      }
+    }
   });
 
 //Error handling middleware

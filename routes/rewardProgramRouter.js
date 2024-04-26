@@ -109,7 +109,6 @@ rewardProgramRouter
     if (!req.user) {
       return res.status(404).json({ message: "Unauthorized: User not found" });
     } else {
-      console.log(req.user.rewardPrograms);
       const programIndex = req.user.rewardPrograms.findIndex(
         (program) => program._id.toString() === req.params.programId
       );
