@@ -1,6 +1,10 @@
 const cors = require("cors");
 
-const whitelist = ["http://localhost:3000"];
+const whitelist = [
+  "http://localhost:3000",
+  "https://journiserver.onrender.com",
+];
+
 const corsOptionsDelegate = (req, callback) => {
   let corsOptions;
   if (whitelist.indexOf(req.header("Origin")) !== -1) {
