@@ -30,14 +30,12 @@ userRouter
   .route("/register")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .post(cors.corsWithOptions, (req, res) => {
-    console.log("HIT endpoint");
     const { username, firstName, lastName, password } = req.body;
     User.register(
       { username, firstName, lastName },
       password,
       (err, newUser) => {
         if (err) {
-          console.log("Error: ", err);
           // Status code 500 is 'internal server error'.
           return res.status(500).json({ err: err });
         } else {
@@ -68,12 +66,11 @@ userRouter
 userRouter
   .route("/login")
   .options(cors.corsWithOptions, (req, res) => {
-    console.log("hit1");
     res.sendStatus(200);
   })
   .post(cors.corsWithOptions, passport.authenticate("local"), (req, res) => {
     // We will pass the id to getToken in authenticate.js and the return result will be our token.
-    console.log(req.user);
+
     const token = authenticate.getToken({ _id: req.user._id });
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");

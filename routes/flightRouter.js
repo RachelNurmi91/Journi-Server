@@ -52,7 +52,7 @@ flightRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a flight the request body must contain a the id of the trip it will be added to.
-    console.log(req.body);
+
     const {
       type,
       airline,
@@ -188,7 +188,6 @@ flightRouter
       if (flightIndex === -1) {
         return res.status(404).json({ message: "Flight not found" });
       } else {
-        console.log(req.user.trips[tripIndex].flights);
         req.user.trips[tripIndex].flights.splice(flightIndex, 1);
         req.user.save((err, user) => {
           if (err) {

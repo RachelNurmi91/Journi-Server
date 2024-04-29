@@ -174,7 +174,6 @@ hotelRouter
       if (hotelIndex === -1) {
         return res.status(404).json({ message: "Hotel not found" });
       } else {
-        console.log(req.user.trips[tripIndex].hotels);
         req.user.trips[tripIndex].hotels.splice(hotelIndex, 1);
         req.user.save((err, user) => {
           if (err) {
