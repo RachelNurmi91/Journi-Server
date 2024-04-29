@@ -7,10 +7,15 @@ const whitelist = [
 
 const corsOptionsDelegate = (req, callback) => {
   let corsOptions;
-  if (whitelist.indexOf(req.header("Origin")) !== -1) {
+  if (process.env.NODE_ENV === "development") {
+    // Allow all origins during development
     corsOptions = { origin: true };
   } else {
-    corsOptions = { origin: false };
+    if (whitelist.indexOf(req.header("Origin")) !== -1) {
+      corsOptions = { origin: true };
+    } else {
+      corsOptions = { origin: false };
+    }
   }
   callback(null, corsOptions);
 };
