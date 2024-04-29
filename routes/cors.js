@@ -3,6 +3,7 @@ const cors = require("cors");
 const whitelist = [
   "http://localhost:3000",
   "https://journiserver.onrender.com",
+  "https://journitravel.netlify.app",
 ];
 
 const corsOptionsDelegate = (req, callback) => {
