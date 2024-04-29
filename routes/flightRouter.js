@@ -105,6 +105,7 @@ flightRouter
 // ---- ROUTE FOR AN INDIVIDUAL FLIGHT ---- //
 flightRouter
   .route("/:flightId")
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 
   // At this point the flightId will be in the url of the req.
   // Since we are focused on the individual flight we do not need the tripId sent over in the req body.
@@ -166,39 +167,38 @@ flightRouter
       .send(`POST operation not supported on /flights/${req.params.flightId}`);
   })
   .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    User.findById(req.user._id)
-      .then((user) => {
-        if (!user)
-          return res
-            .status(404)
-            .json({ message: "Unauthorized: User not found" });
+    if (!req.user) {
+      return res.status(404).json({ message: "Unauthorized: User not found" });
+    } else {
+      const { flightId } = req.params;
 
-        const tripIndex = user.trips.findIndex((trip) => {
-          return trip.flights.find(
-            (flight) => flight._id.toString() === req.params.flightId
-          );
+      let flightIndex;
+      let tripIndex;
+
+      req.user.trips.forEach((trip, userTripsIndex) => {
+        trip.flights.forEach((flight, index) => {
+          if (flight._id.toString() === flightId.toString()) {
+            tripIndex = userTripsIndex;
+            flightIndex = index;
+            return;
+          }
         });
+      });
 
-        if (tripIndex === -1)
-          return res.status(404).json({ message: "Error: Flight not found" });
-
-        user.trips[tripIndex].flights = user.trips[tripIndex].flights.filter(
-          (flight) => flight._id.toString() !== req.params.flightId
-        );
-
-        user
-          .save()
-          .then((user) => {
-            let updatedTrip = user.trips[tripIndex];
-
-            res.status(200).json({
-              message: "Success: Flight deleted successfully",
-              updatedTrip,
-            });
-          })
-          .catch((err) => next(err));
-      })
-      .catch((err) => next(err));
+      if (flightIndex === -1) {
+        return res.status(404).json({ message: "Flight not found" });
+      } else {
+        console.log(req.user.trips[tripIndex].flights);
+        req.user.trips[tripIndex].flights.splice(flightIndex, 1);
+        req.user.save((err, user) => {
+          if (err) {
+            return next(err);
+          }
+          const deletedFlight = user.trips[tripIndex].flights[flightIndex];
+          res.status(200).json(deletedFlight);
+        });
+      }
+    }
   });
 
 //Error handling middleware

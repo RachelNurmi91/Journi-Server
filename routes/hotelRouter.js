@@ -171,7 +171,6 @@ hotelRouter
         });
       });
 
-      console.log("TRIPS INDEX: ", tripIndex);
       if (hotelIndex === -1) {
         return res.status(404).json({ message: "Hotel not found" });
       } else {
