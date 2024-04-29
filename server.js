@@ -12,24 +12,31 @@ const flightRouter = require("./routes/flightRouter");
 const hotelRouter = require("./routes/hotelRouter");
 const rewardProgramRouter = require("./routes/rewardProgramRouter");
 
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 
-const url = config.mongoUrl;
-const connect = mongoose.connect(url, {
-  useCreateIndex: true,
-  useFindAndModify: false,
+const { MongoClient } = require("mongodb");
+
+const uri = config.mongoUrl;
+
+const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+// const connect = mongoose.connect(url, {
+//   useCreateIndex: true,
+//   useFindAndModify: false,
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
 
-connect.then(
+client.connect().then(
   () => console.log("Connected correctly to server"),
   (err) => console.error(err)
 );
 
 //The express() method returns an express server application
 const app = express();
-const PORT = process.env.PORT || 8080 || 3000;
+const PORT = process.env.PORT || 8080;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
