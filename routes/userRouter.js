@@ -6,7 +6,6 @@ const cors = require("./cors");
 
 const userRouter = express.Router();
 
-/* GET users listing. */
 userRouter
   .route("/")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
@@ -18,10 +17,12 @@ userRouter
   .route("/:username")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .get(cors.cors, (req, res, next) => {
-    User.find()
+    User.find({ username: req.params.username })
       .then((users) => {
-        let user = users.find((user) => user.username === req.params.username);
-        return res.status(200).json(user);
+        if (users.length === 0) {
+          return res.status(404).json({ message: "User not found" });
+        }
+        return res.status(200).json(users[0]);
       })
       .catch((err) => next(err));
   });
@@ -36,7 +37,6 @@ userRouter
       password,
       (err, newUser) => {
         if (err) {
-          // Status code 500 is 'internal server error'.
           return res.status(500).json({ err: err });
         } else {
           if (req.body.firstName) {
@@ -45,7 +45,6 @@ userRouter
           if (req.body.lastName) {
             newUser.lastName = req.body.lastName;
           }
-
           newUser.save((err) => {
             if (err) {
               return res.status(500).json({ err: err });
@@ -65,12 +64,8 @@ userRouter
 
 userRouter
   .route("/login")
-  .options(cors.corsWithOptions, (req, res) => {
-    res.sendStatus(200);
-  })
+  .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .post(cors.corsWithOptions, passport.authenticate("local"), (req, res) => {
-    // We will pass the id to getToken in authenticate.js and the return result will be our token.
-
     const token = authenticate.getToken({ _id: req.user._id });
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
