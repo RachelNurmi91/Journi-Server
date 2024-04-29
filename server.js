@@ -29,7 +29,7 @@ connect.then(
 
 //The express() method returns an express server application
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080 || 3000;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
