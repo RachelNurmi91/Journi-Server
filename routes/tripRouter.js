@@ -106,9 +106,13 @@ tripRouter
       return res.status(404).json({ message: "Unauthorized: User not found" });
     } else {
       const { tripId } = req.params;
-      const tripIndex = req.user.trips.hotels.findIndex(
+      console.log("TRIP ID::", tripId);
+
+      const tripIndex = req.user.trips.findIndex(
         (trip) => trip._id.toString() === tripId
       );
+
+      console.log("INDEX::", tripIndex);
 
       if (tripIndex === -1) {
         return res.status(404).json({ message: "Trip not found" });
