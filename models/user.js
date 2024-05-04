@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const activitySchema = new Schema(
   {
     activityName: {
-      type: string,
+      type: String,
       required: true,
     },
     activityDate: {
@@ -14,7 +14,7 @@ const activitySchema = new Schema(
       required: true,
     },
     location: {
-      type: string,
+      type: String,
     },
     confirmation: {
       type: String,

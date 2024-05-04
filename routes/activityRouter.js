@@ -55,6 +55,8 @@ activityRouter
     const { activityName, activityDate, tripId } = req.body;
     const newActivity = { activityName, activityDate };
 
+    console.log("NEW:::: ", newActivity);
+
     User.findById(req.user._id).then((user) => {
       if (!user)
         return res
