@@ -42,6 +42,7 @@ tripRouter
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     const { tripName, departureDate } = req.body;
     const newTrip = { tripName, departureDate };
+
     if (!req.user) {
       // Only logged in users can send a 'POST' request.
       // If the request doesn't have a logged in user we will send a 401 ('Unauthorized')

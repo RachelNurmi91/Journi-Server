@@ -172,8 +172,12 @@ flightRouter
     } else {
       const { flightId } = req.params;
 
+      console.log("IDDDDD: ", flightId);
+
       let flightIndex;
       let tripIndex;
+
+      console.log(req.user.trips);
 
       req.user.trips.forEach((trip, userTripsIndex) => {
         trip.flights.forEach((flight, index) => {
@@ -181,9 +185,15 @@ flightRouter
             tripIndex = userTripsIndex;
             flightIndex = index;
             return;
+          } else {
+            return res
+              .status(404)
+              .json({ message: "Flight not found in this trip" });
           }
         });
       });
+
+      console.log("INDEX::: ", flightIndex);
 
       if (flightIndex === -1) {
         return res.status(404).json({ message: "Flight not found" });
