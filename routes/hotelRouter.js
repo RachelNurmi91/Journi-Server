@@ -89,7 +89,7 @@ hotelRouter
 
 // ---- ROUTE FOR AN INDIVIDUAL HOTEL ---- //
 hotelRouter
-  .route("/:hotelId")
+  .route("/:activityId")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 
   // At this point the hotelId will be in the url of the req.
