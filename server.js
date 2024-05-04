@@ -49,6 +49,7 @@ const userRouter = require("./routes/userRouter");
 const tripRouter = require("./routes/tripRouter");
 const flightRouter = require("./routes/flightRouter");
 const hotelRouter = require("./routes/hotelRouter");
+const activityRouter = require("./routes/activityRouter");
 const rewardProgramRouter = require("./routes/rewardProgramRouter");
 
 // Serving static files
@@ -60,6 +61,7 @@ app.use("/users", userRouter);
 app.use("/trips", tripRouter);
 app.use("/flights", flightRouter);
 app.use("/hotels", hotelRouter);
+app.use("/activities", activityRouter);
 app.use("/rewardPrograms", rewardProgramRouter);
 
 // Catch 404 and forward to error handler
