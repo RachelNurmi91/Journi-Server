@@ -52,10 +52,21 @@ activityRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a activity the request body must contain a the id of the trip it will be added to.
-    const { activityName, activityDate, tripId } = req.body;
-    const newActivity = { activityName, activityDate };
-
-    console.log("NEW:::: ", newActivity);
+    const {
+      activityName,
+      activityDate,
+      tripId,
+      activityTime,
+      addOns,
+      comments,
+    } = req.body;
+    const newActivity = {
+      activityName,
+      activityDate,
+      activityTime,
+      addOns,
+      comments,
+    };
 
     User.findById(req.user._id).then((user) => {
       if (!user)
@@ -73,6 +84,7 @@ activityRouter
         .save()
         .then((user) => {
           const newActivity = user.trips.id(tripId).activities.slice(-1);
+          console.log("New Activity:", newActivity); // Log newActivity object
           res.status(200).json({
             message: "Success: Activity saved successfully",
             newActivity,
