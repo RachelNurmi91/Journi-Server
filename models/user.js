@@ -15,7 +15,6 @@ const activitySchema = new Schema(
     },
     activityTime: {
       type: Date,
-      required: true,
     },
     location: {
       type: String,
