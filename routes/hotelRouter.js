@@ -52,9 +52,26 @@ hotelRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a hotel the request body must contain a the id of the trip it will be added to.
-    const { arrivalDate, departureDate, hotel, city, country, tripId } =
-      req.body;
-    const newHotel = { arrivalDate, departureDate, hotel, city, country };
+    const {
+      arrivalDate,
+      departureDate,
+      nameOnReservation,
+      hotel,
+      city,
+      country,
+      confirmationNo,
+      tripId,
+    } = req.body;
+
+    const newHotel = {
+      arrivalDate,
+      departureDate,
+      nameOnReservation,
+      hotel,
+      city,
+      country,
+      confirmationNo,
+    };
 
     User.findById(req.user._id).then((user) => {
       if (!user)
@@ -89,7 +106,7 @@ hotelRouter
 
 // ---- ROUTE FOR AN INDIVIDUAL HOTEL ---- //
 hotelRouter
-  .route("/:activityId")
+  .route("/:hotelId")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 
   // At this point the hotelId will be in the url of the req.

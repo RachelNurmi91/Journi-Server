@@ -110,11 +110,14 @@ const hotelSchema = new Schema(
       type: Date,
       required: true,
     },
+    nameOnReservation: {
+      type: String,
+    },
     hotel: {
       type: String,
       required: true,
     },
-    confirmation: {
+    confirmationNo: {
       type: String,
     },
     city: {
