@@ -60,8 +60,9 @@ activityRouter
       activityDate,
       activityTime,
       addOns: {
+        addedComments: addOns.addedComments,
         comments: addOns.comments,
-        comment: addOns.comment,
+        addedTickets: addOns.addedTickets,
         ticketNo: addOns.ticketNo,
         ticketUploads: addOns.ticketUploads,
       },
