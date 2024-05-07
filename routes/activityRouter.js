@@ -61,8 +61,6 @@ activityRouter
       addOns,
     } = req.body;
 
-    console.log("LOCATION::: ", location);
-
     const newActivity = {
       activityName,
       activityDate,
