@@ -40,8 +40,21 @@ tripRouter
     res.status(403).send("GET operation not supported on /trips/add");
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { tripName, departureDate } = req.body;
-    const newTrip = { tripName, departureDate };
+    const { tripName, departureDate, selections } = req.body;
+    const newTrip = {
+      tripName,
+      departureDate,
+      selections: {
+        flights: selections.flights,
+        hotels: selections.hotels,
+        cruise: selections.cruise,
+        rentalCar: selections.rentalCar,
+        transportation: selections.transportation,
+        insurance: selections.insurance,
+      },
+    };
+
+    console.log(req.body);
 
     if (!req.user) {
       // Only logged in users can send a 'POST' request.
