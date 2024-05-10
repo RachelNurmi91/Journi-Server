@@ -9,7 +9,7 @@ const cruiseSchema = new Schema(
       type: String,
       required: true,
     },
-    cruiseShop: {
+    cruiseShip: {
       type: String,
       required: true,
     },
