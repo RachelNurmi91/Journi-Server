@@ -3,6 +3,39 @@ const passportLocalMongoose = require("passport-local-mongoose");
 
 const Schema = mongoose.Schema;
 
+const cruiseSchema = new Schema(
+  {
+    cruiseLine: {
+      type: String,
+      required: true,
+    },
+    cruiseShop: {
+      type: String,
+      required: true,
+    },
+    nameOnReservation: {
+      type: String,
+    },
+    departureDate: {
+      type: Date,
+      required: true,
+    },
+    returnDate: {
+      type: Date,
+      required: true,
+    },
+    confirmationNo: {
+      type: String,
+    },
+    cabinNo: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const activitySchema = new Schema(
   {
     activityName: {
@@ -147,6 +180,7 @@ const tripSchema = new Schema(
     hotels: [hotelSchema],
     flights: [flightSchema],
     activities: [activitySchema],
+    cruises: [cruiseSchema],
     selections: {
       flights: {
         type: Boolean,
