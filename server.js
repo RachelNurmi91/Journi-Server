@@ -50,6 +50,7 @@ const tripRouter = require("./routes/tripRouter");
 const flightRouter = require("./routes/flightRouter");
 const hotelRouter = require("./routes/hotelRouter");
 const cruiseRouter = require("./routes/cruiseRouter");
+const insuranceRouter = require("./routes/insuranceRouter");
 const activityRouter = require("./routes/activityRouter");
 const rewardProgramRouter = require("./routes/rewardProgramRouter");
 
@@ -63,6 +64,7 @@ app.use("/trips", tripRouter);
 app.use("/flights", flightRouter);
 app.use("/hotels", hotelRouter);
 app.use("/cruises", cruiseRouter);
+app.use("/insurance", insuranceRouter);
 app.use("/activities", activityRouter);
 app.use("/rewardPrograms", rewardProgramRouter);
 
