@@ -174,11 +174,9 @@ const hotelSchema = new Schema(
     },
     city: {
       type: String,
-      required: true,
     },
     country: {
       type: String,
-      required: true,
     },
   },
   {
@@ -200,9 +198,9 @@ const tripSchema = new Schema(
     flights: [flightSchema],
     activities: [activitySchema],
     cruises: [cruiseSchema],
-    rentals: [rentalSchema],
+    // rentals: [rentalSchema],
     insurance: [insuranceSchema],
-    transportation: [transportationSchema],
+    // transportation: [transportationSchema],
     selections: {
       flights: {
         type: Boolean,

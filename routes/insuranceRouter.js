@@ -29,18 +29,18 @@ insuranceRouter
             .status(404)
             .json({ message: "Unauthorized: Trip not found" });
 
-        res.status(200).json(trip.insurances);
+        res.status(200).json(trip.insurance);
       })
       .catch((err) => next(err));
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    res.status(403).send("POST operation not supported on /insurances");
+    res.status(403).send("POST operation not supported on /insurance");
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    res.status(403).send("PUT operation not supported on /insurances");
+    res.status(403).send("PUT operation not supported on /insurance");
   })
   .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    res.status(403).send("DELETE operation not supported on /insurances");
+    res.status(403).send("DELETE operation not supported on /insurance");
   });
 
 // ---- ROUTE FOR ADDING A CRUISE TO A TRIP ---- //
@@ -48,7 +48,7 @@ insuranceRouter
   .route("/add")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
-    res.status(403).send("GET operation not supported on /insurances/add");
+    res.status(403).send("GET operation not supported on /insurance/add");
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a insurance the request body must contain a the id of the trip it will be added to.
@@ -70,12 +70,12 @@ insuranceRouter
       if (!trip)
         return res.status(404).json({ message: "Error: Trip not found" });
 
-      trip.insurances.push(newInsurance);
+      trip.insurance.push(newInsurance);
 
       user
         .save()
         .then((user) => {
-          const newInsurance = user.trips.id(tripId).insurances.slice(-1);
+          const newInsurance = user.trips.id(tripId).insurance.slice(-1);
           res.status(200).json({
             message: "Success: Insurance saved successfully",
             newInsurance,
@@ -85,10 +85,10 @@ insuranceRouter
     });
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    res.status(403).send("PUT operation not supported on /insurances/add");
+    res.status(403).send("PUT operation not supported on /insurance/add");
   })
   .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    res.status(403).send("DELETE operation not supported on /insurances/add");
+    res.status(403).send("DELETE operation not supported on /insurance/add");
   });
 
 // ---- ROUTE FOR AN INDIVIDUAL CRUISE ---- //
@@ -103,23 +103,23 @@ insuranceRouter
     res
       .status(403)
       .send(
-        `GET operation not supported on /insurances/${req.params.insuranceId}`
+        `GET operation not supported on /insurance/${req.params.insuranceId}`
       );
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     const { insuranceProvider, policyNo, comments } = req.body;
     User.findOneAndUpdate(
-      { "trips.insurances._id": req.params.insuranceId },
+      { "trips.insurance._id": req.params.insuranceId },
       {
         $set: {
-          "trips.$[i].insurances.$[x].insuranceProvider": insuranceProvider,
-          "trips.$[i].insurances.$[x].policyNo": policyNo,
-          "trips.$[i].insurances.$[x].comments": comments,
+          "trips.$[i].insurance.$[x].insuranceProvider": insuranceProvider,
+          "trips.$[i].insurance.$[x].policyNo": policyNo,
+          "trips.$[i].insurance.$[x].comments": comments,
         },
       },
       {
         arrayFilters: [
-          { "i.insurances._id": req.params.insuranceId },
+          { "i.insurance._id": req.params.insuranceId },
           { "x._id": req.params.insuranceId },
         ],
         new: true,
@@ -136,7 +136,7 @@ insuranceRouter
             let updatedInsurance;
 
             user.trips.forEach((trip) => {
-              trip.insurances.forEach((insurance) => {
+              trip.insurance.forEach((insurance) => {
                 if (insurance._id.toString() === req.params.insuranceId) {
                   updatedInsurance = insurance;
                   return;
@@ -156,7 +156,7 @@ insuranceRouter
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
-      .send(`POST operation not supported on /insurances/${req.params._id}`);
+      .send(`POST operation not supported on /insurance/${req.params._id}`);
   })
   .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     if (!req.user) {
@@ -168,7 +168,7 @@ insuranceRouter
       let tripIndex;
 
       req.user.trips.forEach((trip, userTripsIndex) => {
-        trip.insurances.forEach((insurance, index) => {
+        trip.insurance.forEach((insurance, index) => {
           if (insurance._id.toString() === insuranceId.toString()) {
             tripIndex = userTripsIndex;
             insuranceIndex = index;
@@ -180,13 +180,13 @@ insuranceRouter
       if (insuranceIndex === -1) {
         return res.status(404).json({ message: "Insurance not found" });
       } else {
-        req.user.trips[tripIndex].insurances.splice(insuranceIndex, 1);
+        req.user.trips[tripIndex].insurance.splice(insuranceIndex, 1);
         req.user.save((err, user) => {
           if (err) {
             return next(err);
           }
           const deletedInsurance =
-            user.trips[tripIndex].insurances[insuranceIndex];
+            user.trips[tripIndex].insurance[insuranceIndex];
           res.status(200).json(deletedInsurance);
         });
       }
