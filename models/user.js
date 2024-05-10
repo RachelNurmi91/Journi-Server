@@ -147,6 +147,26 @@ const tripSchema = new Schema(
     hotels: [hotelSchema],
     flights: [flightSchema],
     activities: [activitySchema],
+    selections: {
+      flights: {
+        type: Boolean,
+      },
+      hotels: {
+        type: Boolean,
+      },
+      rentalCar: {
+        type: Boolean,
+      },
+      cruise: {
+        type: Boolean,
+      },
+      transportation: {
+        type: Boolean,
+      },
+      insurance: {
+        type: Boolean,
+      },
+    },
   },
   {
     timestamps: true,
