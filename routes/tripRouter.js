@@ -54,8 +54,6 @@ tripRouter
       },
     };
 
-    console.log(req.body);
-
     if (!req.user) {
       // Only logged in users can send a 'POST' request.
       // If the request doesn't have a logged in user we will send a 401 ('Unauthorized')
@@ -102,6 +100,13 @@ tripRouter
           $set: {
             "trips.$.tripName": req.body.tripName,
             "trips.$.departureDate": req.body.departureDate,
+            "trips.$.selections.flights": req.body.selections.flights,
+            "trips.$.selections.hotels": req.body.selections.hotels,
+            "trips.$.selections.cruise": req.body.selections.cruise,
+            "trips.$.selections.rentalCar": req.body.selections.rentalCar,
+            "trips.$.selections.insurance": req.body.selections.insurance,
+            "trips.$.selections.transportation":
+              req.body.selections.transportation,
           },
         },
         { new: true }
