@@ -52,10 +52,10 @@ insuranceRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a insurance the request body must contain a the id of the trip it will be added to.
-    const { insuranceProvider, policyNo, comments, tripId } = req.body;
+    const { name, policyNo, comments, tripId } = req.body;
 
     const newInsurance = {
-      insuranceProvider,
+      name,
       policyNo,
       comments,
     };
@@ -107,12 +107,12 @@ insuranceRouter
       );
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { insuranceProvider, policyNo, comments } = req.body;
+    const { name, policyNo, comments } = req.body;
     User.findOneAndUpdate(
       { "trips.insurance._id": req.params.insuranceId },
       {
         $set: {
-          "trips.$[i].insurance.$[x].insuranceProvider": insuranceProvider,
+          "trips.$[i].insurance.$[x].name": name,
           "trips.$[i].insurance.$[x].policyNo": policyNo,
           "trips.$[i].insurance.$[x].comments": comments,
         },

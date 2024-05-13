@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const insuranceSchema = new Schema(
   {
-    insuranceProvider: {
+    name: {
       type: String,
       required: true,
     },
@@ -24,22 +24,19 @@ const insuranceSchema = new Schema(
 
 const cruiseSchema = new Schema(
   {
-    cruiseLine: {
+    name: {
       type: String,
       required: true,
     },
-    cruiseShip: {
+    ship: {
       type: String,
       required: true,
     },
-    nameOnReservation: {
-      type: String,
-    },
-    departureDate: {
+    startDate: {
       type: Date,
       required: true,
     },
-    returnDate: {
+    endDate: {
       type: Date,
       required: true,
     },
@@ -57,15 +54,15 @@ const cruiseSchema = new Schema(
 
 const activitySchema = new Schema(
   {
-    activityName: {
+    name: {
       type: String,
       required: true,
     },
-    activityDate: {
+    startDate: {
       type: Date,
       required: true,
     },
-    activityTime: {
+    startTime: {
       type: Date,
     },
     location: {
@@ -154,18 +151,18 @@ const flightSchema = new Schema(
 
 const hotelSchema = new Schema(
   {
-    arrivalDate: {
+    startDate: {
       type: Date,
       required: true,
     },
-    departureDate: {
+    endDate: {
       type: Date,
       required: true,
     },
     nameOnReservation: {
       type: String,
     },
-    hotel: {
+    name: {
       type: String,
       required: true,
     },
@@ -186,11 +183,11 @@ const hotelSchema = new Schema(
 
 const tripSchema = new Schema(
   {
-    tripName: {
+    name: {
       type: String,
       required: true,
     },
-    departureDate: {
+    startDate: {
       type: Date,
       required: true,
     },
@@ -229,7 +226,7 @@ const tripSchema = new Schema(
 
 const rewardProgramSchema = new Schema(
   {
-    programName: {
+    name: {
       type: String,
       required: true,
     },

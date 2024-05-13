@@ -52,21 +52,14 @@ cruiseRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a cruise the request body must contain a the id of the trip it will be added to.
-    const {
-      cruiseLine,
-      cruiseShip,
-      departureDate,
-      returnDate,
-      confirmationNo,
-      cabinNo,
-      tripId,
-    } = req.body;
+    const { name, ship, startDate, endDate, confirmationNo, cabinNo, tripId } =
+      req.body;
 
     const newCruise = {
-      cruiseLine,
-      cruiseShip,
-      departureDate,
-      returnDate,
+      name,
+      ship,
+      startDate,
+      endDate,
       confirmationNo,
       cabinNo,
     };
@@ -116,22 +109,16 @@ cruiseRouter
       .send(`GET operation not supported on /cruises/${req.params.cruiseId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const {
-      cruiseLine,
-      cruiseShip,
-      departureDate,
-      returnDate,
-      confirmationNo,
-      cabinNo,
-    } = req.body;
+    const { name, ship, startDate, endDate, confirmationNo, cabinNo } =
+      req.body;
     User.findOneAndUpdate(
       { "trips.cruises._id": req.params.cruiseId },
       {
         $set: {
-          "trips.$[i].cruises.$[x].cruiseLine": cruiseLine,
-          "trips.$[i].cruises.$[x].cruiseShip": cruiseShip,
-          "trips.$[i].cruises.$[x].departureDate": departureDate,
-          "trips.$[i].cruises.$[x].returnDate": returnDate,
+          "trips.$[i].cruises.$[x].name": name,
+          "trips.$[i].cruises.$[x].ship": ship,
+          "trips.$[i].cruises.$[x].startDate": startDate,
+          "trips.$[i].cruises.$[x].endDate": endDate,
           "trips.$[i].cruises.$[x].confirmationNo": confirmationNo,
           "trips.$[i].cruises.$[x].cabinNo": cabinNo,
         },

@@ -52,19 +52,12 @@ activityRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a activity the request body must contain a the id of the trip it will be added to.
-    const {
-      activityName,
-      activityDate,
-      tripId,
-      activityTime,
-      location,
-      addOns,
-    } = req.body;
+    const { name, startDate, tripId, startTime, location, addOns } = req.body;
 
     const newActivity = {
-      activityName,
-      activityDate,
-      activityTime,
+      name,
+      startDate,
+      startTime,
       location,
       addOns: {
         comments: addOns.comments,

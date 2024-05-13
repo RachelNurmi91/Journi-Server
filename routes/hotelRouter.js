@@ -53,8 +53,8 @@ hotelRouter
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a hotel the request body must contain a the id of the trip it will be added to.
     const {
-      arrivalDate,
-      departureDate,
+      startDate,
+      endDate,
       nameOnReservation,
       hotel,
       city,
@@ -64,8 +64,8 @@ hotelRouter
     } = req.body;
 
     const newHotel = {
-      arrivalDate,
-      departureDate,
+      startDate,
+      endDate,
       nameOnReservation,
       hotel,
       city,
@@ -118,14 +118,14 @@ hotelRouter
       .send(`GET operation not supported on /hotels/${req.params.hotelId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { arrivalDate, departureDate, hotel, city, country } = req.body;
+    const { startDate, endDate, hotel, city, country } = req.body;
     User.findOneAndUpdate(
       { "trips.hotels._id": req.params.hotelId },
       {
         $set: {
-          "trips.$[i].hotels.$[x].arrivalDate": arrivalDate,
-          "trips.$[i].hotels.$[x].departureDate": departureDate,
-          "trips.$[i].hotels.$[x].hotel": hotel,
+          "trips.$[i].hotels.$[x].startDate": startDate,
+          "trips.$[i].hotels.$[x].endDate": endDate,
+          "trips.$[i].hotels.$[x].name": name,
           "trips.$[i].hotels.$[x].city": city,
           "trips.$[i].hotels.$[x].country": country,
         },
