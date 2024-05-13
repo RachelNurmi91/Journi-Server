@@ -40,10 +40,10 @@ tripRouter
     res.status(403).send("GET operation not supported on /trips/add");
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { tripName, departureDate, selections } = req.body;
+    const { name, startDate, selections } = req.body;
     const newTrip = {
-      tripName,
-      departureDate,
+      name,
+      startDate,
       selections: {
         flights: selections.flights,
         hotels: selections.hotels,
@@ -98,8 +98,8 @@ tripRouter
         { "trips._id": req.params.tripId },
         {
           $set: {
-            "trips.$.tripName": req.body.tripName,
-            "trips.$.departureDate": req.body.departureDate,
+            "trips.$.name": req.body.name,
+            "trips.$.startDate": req.body.startDate,
             "trips.$.selections.flights": req.body.selections.flights,
             "trips.$.selections.hotels": req.body.selections.hotels,
             "trips.$.selections.cruise": req.body.selections.cruise,
