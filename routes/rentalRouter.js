@@ -11,7 +11,7 @@ rentalRouter
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     // Rentals are trip based, not user based.
-    // The request body must contain a specified tripId.
+    // The request body must contain a specified tripId.s
 
     User.findById(req.user._id)
       .then((user) => {
@@ -52,25 +52,13 @@ rentalRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a rental the request body must contain a the id of the trip it will be added to.
-    const {
-      startDate,
-      endDate,
-      nameOnReservation,
-      name,
-      city,
-      country,
-      confirmationNo,
-      tripId,
-    } = req.body;
+    const { name, startDate, endDate, vehicleType, tripId } = req.body;
 
     const newRental = {
+      name,
       startDate,
       endDate,
-      nameOnReservation,
-      name,
-      city,
-      country,
-      confirmationNo,
+      vehicleType,
     };
 
     User.findById(req.user._id).then((user) => {
@@ -126,8 +114,6 @@ rentalRouter
           "trips.$[i].rentals.$[x].startDate": startDate,
           "trips.$[i].rentals.$[x].endDate": endDate,
           "trips.$[i].rentals.$[x].name": name,
-          "trips.$[i].rentals.$[x].city": city,
-          "trips.$[i].rentals.$[x].country": country,
         },
       },
       {
