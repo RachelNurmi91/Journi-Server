@@ -52,13 +52,29 @@ rentalRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a rental the request body must contain a the id of the trip it will be added to.
-    const { name, startDate, endDate, vehicleType, tripId } = req.body;
+    const {
+      name,
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+      vehicleType,
+      confirmationNo,
+      startLocation,
+      endLocation,
+      tripId,
+    } = req.body;
 
     const newRental = {
       name,
       startDate,
       endDate,
+      startTime,
+      endTime,
       vehicleType,
+      confirmationNo,
+      startLocation,
+      endLocation,
     };
 
     User.findById(req.user._id).then((user) => {

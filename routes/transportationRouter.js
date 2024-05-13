@@ -52,10 +52,21 @@ transportationRouter
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     // To add a transportation the request body must contain a the id of the trip it will be added to.
-    const { startDate, type, tripId } = req.body;
-    console.log(req.body);
-    const newTransportation = {
+    const {
+      name,
+      location,
       startDate,
+      type,
+      ticketNo,
+      confirmationNo,
+      tripId,
+    } = req.body;
+    const newTransportation = {
+      name,
+      location,
+      startDate,
+      ticketNo,
+      confirmationNo,
       type,
     };
 
