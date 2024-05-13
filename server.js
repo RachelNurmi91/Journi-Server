@@ -52,6 +52,7 @@ const hotelRouter = require("./routes/hotelRouter");
 const cruiseRouter = require("./routes/cruiseRouter");
 const insuranceRouter = require("./routes/insuranceRouter");
 const activityRouter = require("./routes/activityRouter");
+const rentalRouter = require("./routes/rentalRouter");
 const transportationRouter = require("./routes/transportationRouter");
 const rewardProgramRouter = require("./routes/rewardProgramRouter");
 
@@ -68,6 +69,7 @@ app.use("/cruises", cruiseRouter);
 app.use("/insurance", insuranceRouter);
 app.use("/activities", activityRouter);
 app.use("/transportation", transportationRouter);
+app.use("/rentals", rentalRouter);
 app.use("/rewardPrograms", rewardProgramRouter);
 
 // Catch 404 and forward to error handler
