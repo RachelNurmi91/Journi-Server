@@ -46,6 +46,7 @@ const transportationSchema = new Schema(
   {
     name: {
       type: String,
+      required: true,
     },
     location: {
       type: String,
