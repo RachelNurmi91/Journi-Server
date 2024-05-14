@@ -71,7 +71,7 @@ app.use("/insurance", insuranceRouter);
 app.use("/activities", activityRouter);
 app.use("/transportation", transportationRouter);
 app.use("/rentals", rentalRouter);
-app.use("notes", noteRouter);
+app.use("/notes", noteRouter);
 app.use("/rewardPrograms", rewardProgramRouter);
 
 // Catch 404 and forward to error handler

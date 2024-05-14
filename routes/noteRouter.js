@@ -1,25 +1,38 @@
 const express = require("express");
-const User = require("../models/user");
 const authenticate = require("../authenticate");
+const User = require("../models/user");
 const cors = require("./cors");
 
 const noteRouter = express.Router();
 
-// Route for Trip List
+// ---- ROUTE FOR OBTAINING A TRIP'S HOTEL LIST ---- //
 noteRouter
   .route("/")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
-    User.find()
-      .then((trips) => {
-        // The res.json line will send the client JSON and end the find function.
-        // It also automatically sets the header Content-Type to 'application/json'
-        res.status(200).json(trips);
+    // Hotels are trip based, not user based.
+    // The request body must contain a specified tripId.
+
+    User.findById(req.user._id)
+      .then((user) => {
+        if (!user)
+          return res
+            .status(404)
+            .json({ message: "Unauthorized: User not found" });
+
+        // Search the trips for an id that matches our request.
+
+        const trip = req.user.trips.id(req.body.tripId);
+
+        if (!trip)
+          return res
+            .status(404)
+            .json({ message: "Unauthorized: Trip not found" });
+
+        res.status(200).json(trip.notes);
       })
       .catch((err) => next(err));
   })
-  // The '/notes' route is only for viewing reward programs.
-  // For the rest of the requests we will return status code 403 ('Forbidden')
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("POST operation not supported on /notes");
   })
@@ -30,32 +43,44 @@ noteRouter
     res.status(403).send("DELETE operation not supported on /notes");
   });
 
-// Route for the Add Trip
+// ---- ROUTE FOR ADDING A HOTEL TO A TRIP ---- //
 noteRouter
   .route("/add")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-  // The '/notes/add' route is only for adding new reward programs.
-  // All requests except POST will return status code 403 ('Forbidden')
   .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("GET operation not supported on /notes/add");
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { note } = req.body;
-    const newNote = { note };
-    if (!req.user) {
-      // Only logged in users can send a 'POST' request.
-      // If the request doesn't have a logged in user we will send a 401 ('Unauthorized')
-      return res.status(401).json({ message: "Unauthorized: User not found" });
-    } else {
-      req.user.notes.push(newNote);
-      req.user
+    // To add a note the request body must contain a the id of the trip it will be added to.
+    const { note, tripId } = req.body;
+
+    const newNote = {
+      note,
+    };
+
+    User.findById(req.user._id).then((user) => {
+      if (!user)
+        return res
+          .status(404)
+          .json({ message: "Unauthorized: User not found" });
+
+      const trip = user.trips.id(tripId);
+      if (!trip)
+        return res.status(404).json({ message: "Error: Trip not found" });
+
+      trip.notes.push(newNote);
+
+      user
         .save()
         .then((user) => {
-          // Status code 201 is "Created". Its more descriptive than just sending 200 ("OK").
-          res.status(201).json(user.notes[user.notes.length - 1]);
+          const newNote = user.trips.id(tripId).notes.slice(-1);
+          res.status(200).json({
+            message: "Success: Hotel saved successfully",
+            newNote,
+          });
         })
         .catch((err) => next(err));
-    }
+    });
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.status(403).send("PUT operation not supported on /notes/add");
@@ -64,61 +89,100 @@ noteRouter
     res.status(403).send("DELETE operation not supported on /notes/add");
   });
 
-// Route for Update Trip
+// ---- ROUTE FOR AN INDIVIDUAL HOTEL ---- //
 noteRouter
-  .route("/:programId")
+  .route("/:noteId")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
+
+  // At this point the noteId will be in the url of the req.
+  // Since we are focused on the individual note we do not need the tripId sent over in the req body.
+
+  .get(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
-      .send(`GET operation not supported on /trips/${req.params.tripId}`);
+      .send(`GET operation not supported on /notes/${req.params.noteId}`);
+  })
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    const { startDate, endDate, note, city, country } = req.body;
+    User.findOneAndUpdate(
+      { "trips.notes._id": req.params.noteId },
+      {
+        $set: {
+          "trips.$[i].notes.$[x].startDate": startDate,
+          "trips.$[i].notes.$[x].endDate": endDate,
+          "trips.$[i].notes.$[x].name": name,
+          "trips.$[i].notes.$[x].city": city,
+          "trips.$[i].notes.$[x].country": country,
+        },
+      },
+      {
+        arrayFilters: [
+          { "i.notes._id": req.params.noteId },
+          { "x._id": req.params.noteId },
+        ],
+        new: true,
+      }
+    )
+      .then((note) => {
+        if (!note)
+          return res.status(404).json({ message: "Error: Hotel not found" });
+        note
+          .save()
+          .then((user) => {
+            let updatedHotel;
+
+            user.trips.forEach((trip) => {
+              trip.notes.forEach((note) => {
+                if (note._id.toString() === req.params.noteId) {
+                  updatedHotel = note;
+                  return;
+                }
+              });
+            });
+
+            res.status(200).json({
+              message: "Success: Hotel update saved successfully",
+              updatedHotel,
+            });
+          })
+          .catch((err) => next(err));
+      })
+      .catch((err) => next(err));
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res
       .status(403)
-      .send(`POST operation not supported on /trips/${req.params.tripId}`);
-  })
-  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    if (!req.user) {
-      return res.status(404).json({ message: "Unauthorized: User not found" });
-    } else {
-      User.findOneAndUpdate(
-        { "trips._id": req.params.tripId },
-        {
-          $set: {
-            "trips.$.tripName": req.body.tripName,
-            "trips.$.departureDate": req.body.departureDate,
-          },
-        },
-        { new: true }
-      )
-        .then((user) => {
-          const updatedTrip = user.trips.find(
-            (trip) => trip._id.toString() === req.params.tripId
-          );
-          res.status(200).json(updatedTrip);
-        })
-        .catch((err) => next(err));
-    }
+      .send(`POST operation not supported on /notes/${req.params._id}`);
   })
   .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     if (!req.user) {
       return res.status(404).json({ message: "Unauthorized: User not found" });
     } else {
-      const programIndex = req.user.notes.findIndex(
-        (program) => program._id.toString() === req.params.programId
-      );
+      const { noteId } = req.params;
 
-      if (programIndex === -1) {
-        return res.status(404).json({ message: "Reward Program not found" });
+      let noteIndex;
+      let tripIndex;
+
+      req.user.trips.forEach((trip, userTripsIndex) => {
+        trip.notes.forEach((note, index) => {
+          if (note._id.toString() === noteId.toString()) {
+            tripIndex = userTripsIndex;
+            noteIndex = index;
+            return;
+          }
+        });
+      });
+
+      if (noteIndex === -1) {
+        return res.status(404).json({ message: "Hotel not found" });
       } else {
-        req.user.notes.splice(programIndex, 1);
+        req.user.trips[tripIndex].notes.splice(noteIndex, 1);
         req.user.save((err, user) => {
           if (err) {
             return next(err);
           }
-          const deletedProgram = user.notes[programIndex];
-          res.status(200).json(deletedProgram);
+          const deletedHotel = user.trips[tripIndex].notes[noteIndex];
+          res.status(200).json(deletedHotel);
         });
       }
     }
