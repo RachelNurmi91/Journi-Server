@@ -40,10 +40,11 @@ tripRouter
     res.status(403).send("GET operation not supported on /trips/add");
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { name, startDate, selections } = req.body;
+    const { name, startDate, endDate, selections } = req.body;
     const newTrip = {
       name,
       startDate,
+      endDate,
       selections: {
         flights: selections.flights,
         hotels: selections.hotels,

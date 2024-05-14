@@ -274,6 +274,10 @@ const tripSchema = new Schema(
       type: Date,
       required: true,
     },
+    endDate: {
+      type: Date,
+      required: true,
+    },
     hotels: [hotelSchema],
     flights: [flightSchema],
     activities: [activitySchema],
