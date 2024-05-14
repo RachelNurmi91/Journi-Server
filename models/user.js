@@ -3,6 +3,18 @@ const passportLocalMongoose = require("passport-local-mongoose");
 
 const Schema = mongoose.Schema;
 
+const noteSchema = new Schema(
+  {
+    note: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const rentalSchema = new Schema(
   {
     name: {
@@ -269,6 +281,7 @@ const tripSchema = new Schema(
     rentals: [rentalSchema],
     insurance: [insuranceSchema],
     transportation: [transportationSchema],
+    notes: [noteSchema],
     selections: {
       flights: {
         type: Boolean,
