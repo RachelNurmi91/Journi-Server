@@ -58,7 +58,6 @@ transportationRouter
       startDate,
       startTime,
       type,
-      ticketNo,
       confirmationNo,
       tripId,
     } = req.body;
@@ -67,7 +66,6 @@ transportationRouter
       location,
       startDate,
       startTime,
-      ticketNo,
       confirmationNo,
       type,
     };
@@ -123,14 +121,18 @@ transportationRouter
       );
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { name, policyNo, comments } = req.body;
+    const { name, confirmationNo, location, startDate, endDate, type } =
+      req.body;
     User.findOneAndUpdate(
       { "trips.transportation._id": req.params.transportationId },
       {
         $set: {
           "trips.$[i].transportation.$[x].name": name,
-          "trips.$[i].transportation.$[x].policyNo": policyNo,
-          "trips.$[i].transportation.$[x].comments": comments,
+          "trips.$[i].transportation.$[x].confirmationNo": confirmationNo,
+          "trips.$[i].transportation.$[x].location": location,
+          "trips.$[i].transportation.$[x].startDate": startDate,
+          "trips.$[i].transportation.$[x].endDate": endDate,
+          "trips.$[i].transportation.$[x].type": type,
         },
       },
       {

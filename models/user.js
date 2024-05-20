@@ -66,9 +66,6 @@ const transportationSchema = new Schema(
     confirmationNo: {
       type: String,
     },
-    ticketNo: {
-      type: String,
-    },
     startDate: {
       type: Date,
       required: true,
