@@ -82,7 +82,6 @@ activityRouter
         .save()
         .then((user) => {
           const newActivity = user.trips.id(tripId).activities.slice(-1);
-          console.log("New Activity:", newActivity); // Log newActivity object
           res.status(200).json({
             message: "Success: Activity saved successfully",
             newActivity,
@@ -115,7 +114,6 @@ activityRouter
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     const { name, location, startDate, startTime, addOns } = req.body;
-    console.log("BOOOODDDDYYYY:::", req.body);
     User.findOneAndUpdate(
       { "trips.activities._id": req.params.activityId },
       {

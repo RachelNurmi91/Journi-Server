@@ -108,7 +108,7 @@ noteRouter
       { "trips.notes._id": req.params.noteId },
       {
         $set: {
-          "trips.$[i].notes.$[x].note": startDate,
+          "trips.$[i].notes.$[x].note": note,
         },
       },
       {
