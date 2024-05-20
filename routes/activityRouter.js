@@ -114,11 +114,52 @@ activityRouter
       );
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    res
-      .status(403)
-      .send(
-        `PUT operation not supported on /activities/${req.params.activityId}`
-      );
+    const { name, location, startDate, startTime, addOns } = req.body;
+    console.log("BOOOODDDDYYYY:::", req.body);
+    User.findOneAndUpdate(
+      { "trips.activities._id": req.params.activityId },
+      {
+        $set: {
+          "trips.$[i].activities.$[x].name": name,
+          "trips.$[i].activities.$[x].location": location,
+          "trips.$[i].activities.$[x].startDate": startDate,
+          "trips.$[i].activities.$[x].startTime": startTime,
+          "trips.$[i].activities.$[x].addOns": addOns,
+        },
+      },
+      {
+        arrayFilters: [
+          { "i.activities._id": req.params.activityId },
+          { "x._id": req.params.activityId },
+        ],
+        new: true,
+      }
+    )
+      .then((activity) => {
+        if (!activity)
+          return res.status(404).json({ message: "Error: Activity not found" });
+        activity
+          .save()
+          .then((user) => {
+            let updatedActivity;
+
+            user.trips.forEach((trip) => {
+              trip.activities.forEach((activity) => {
+                if (activity._id.toString() === req.params.activityId) {
+                  updatedActivity = activity;
+                  return;
+                }
+              });
+            });
+
+            res.status(200).json({
+              message: "Success: Activity update saved successfully",
+              updatedCruise: updatedActivity,
+            });
+          })
+          .catch((err) => next(err));
+      })
+      .catch((err) => next(err));
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res

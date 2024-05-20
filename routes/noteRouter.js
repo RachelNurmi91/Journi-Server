@@ -103,16 +103,12 @@ noteRouter
       .send(`GET operation not supported on /notes/${req.params.noteId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { startDate, endDate, note, city, country } = req.body;
+    const { note } = req.body;
     User.findOneAndUpdate(
       { "trips.notes._id": req.params.noteId },
       {
         $set: {
-          "trips.$[i].notes.$[x].startDate": startDate,
-          "trips.$[i].notes.$[x].endDate": endDate,
-          "trips.$[i].notes.$[x].name": name,
-          "trips.$[i].notes.$[x].city": city,
-          "trips.$[i].notes.$[x].country": country,
+          "trips.$[i].notes.$[x].note": startDate,
         },
       },
       {
