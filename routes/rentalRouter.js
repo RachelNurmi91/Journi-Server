@@ -122,14 +122,30 @@ rentalRouter
       .send(`GET operation not supported on /rentals/${req.params.rentalId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { startDate, endDate, rental, city, country } = req.body;
+    const {
+      startDate,
+      startTime,
+      startLocation,
+      endDate,
+      endTime,
+      endLocation,
+      name,
+      confirmationNo,
+      vehicleType,
+    } = req.body;
     User.findOneAndUpdate(
       { "trips.rentals._id": req.params.rentalId },
       {
         $set: {
           "trips.$[i].rentals.$[x].startDate": startDate,
+          "trips.$[i].rentals.$[x].startTime": startTime,
+          "trips.$[i].rentals.$[x].startLocation": startLocation,
           "trips.$[i].rentals.$[x].endDate": endDate,
+          "trips.$[i].rentals.$[x].endTime": endTime,
+          "trips.$[i].rentals.$[x].endLocation": endLocation,
           "trips.$[i].rentals.$[x].name": name,
+          "trips.$[i].rentals.$[x].confirmationNo": confirmationNo,
+          "trips.$[i].rentals.$[x].vehicleType": vehicleType,
         },
       },
       {

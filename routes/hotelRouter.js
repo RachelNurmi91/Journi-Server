@@ -118,7 +118,15 @@ hotelRouter
       .send(`GET operation not supported on /hotels/${req.params.hotelId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { startDate, endDate, hotel, city, country } = req.body;
+    const {
+      name,
+      startDate,
+      endDate,
+      city,
+      country,
+      nameOnReservation,
+      confirmationNo,
+    } = req.body;
     User.findOneAndUpdate(
       { "trips.hotels._id": req.params.hotelId },
       {
@@ -128,6 +136,8 @@ hotelRouter
           "trips.$[i].hotels.$[x].name": name,
           "trips.$[i].hotels.$[x].city": city,
           "trips.$[i].hotels.$[x].country": country,
+          "trips.$[i].hotels.$[x].nameOnReservation": nameOnReservation,
+          "trips.$[i].hotels.$[x].confirmationNo": confirmationNo,
         },
       },
       {
