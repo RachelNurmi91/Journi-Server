@@ -176,17 +176,31 @@ const activitySchema = new Schema(
 
 const flightDetailsSchema = new Schema(
   {
+    name: {
+      type: String,
+    },
     airport: {
+      type: String,
+    },
+    destinationAirport: {
       type: String,
     },
     code: {
       type: String,
     },
+    destinationCode: {
+      type: String,
+    },
     city: {
       type: String,
-      required: true,
+    },
+    destinationCity: {
+      type: String,
     },
     country: {
+      type: String,
+    },
+    destinationCountry: {
       type: String,
     },
     flightNo: {
@@ -198,6 +212,9 @@ const flightDetailsSchema = new Schema(
     date: {
       type: Date,
     },
+    time: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -206,22 +223,23 @@ const flightDetailsSchema = new Schema(
 
 const flightSchema = new Schema(
   {
-    type: {
+    isRoundTrip: {
+      type: Boolean,
+      required: true,
+    },
+    nameOnReservation: {
       type: String,
       required: true,
     },
-    airline: {
-      type: String,
+    departureFlight: {
+      type: flightDetailsSchema,
       required: true,
     },
-    confirmationNo: {
-      type: String,
-    },
-    departureFlight: [flightDetailsSchema],
-    returnFlight: [flightDetailsSchema],
-    ticketHolder: {
-      type: String,
-      required: true,
+    returnFlight: {
+      type: flightDetailsSchema,
+      required: function () {
+        return this.isRoundTrip; // Return flight is required only for round trips
+      },
     },
   },
   {

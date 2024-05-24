@@ -54,22 +54,23 @@ flightRouter
     // To add a flight the request body must contain a the id of the trip it will be added to.
 
     const {
-      type,
-      airline,
-      ticketHolder,
+      isRoundTrip,
+      nameOnReservation,
       tripId,
-      confirmationNo,
       departureFlight,
       returnFlight,
     } = req.body;
+
+    console.log("BODY::::", req.body);
+
     const newFlight = {
-      type,
-      airline,
-      ticketHolder,
-      confirmationNo,
+      isRoundTrip,
+      nameOnReservation,
       departureFlight,
       returnFlight,
     };
+
+    console.log("NEW::::", req.newFlight);
 
     User.findById(req.user._id).then((user) => {
       if (!user)
@@ -116,15 +117,13 @@ flightRouter
       .send(`GET operation not supported on /flights/${req.params.flightId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { type, airline, ticketHolder, confirmationNo } = req.body;
+    const { isRoundTrip, confirmationNo } = req.body;
     User.findOneAndUpdate(
       { "trips.flights._id": req.params.flightId },
       {
         $set: {
-          "trips.$[i].flights.$[x].type": type,
-          "trips.$[i].flights.$[x].airline": airline,
-          "trips.$[i].flights.$[x].ticketHolder": ticketHolder,
-          "trips.$[i].flights.$[x].confirmationNo": confirmationNo,
+          "trips.$[i].flights.$[x].isRoundTrip": isRoundTrip,
+          "trips.$[i].flights.$[x].nameOnReservation": nameOnReservation,
         },
       },
       {
