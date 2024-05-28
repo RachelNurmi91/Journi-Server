@@ -61,16 +61,38 @@ flightRouter
       returnFlight,
     } = req.body;
 
-    console.log("BODY::::", req.body);
-
     const newFlight = {
       isRoundTrip,
       nameOnReservation,
-      departureFlight,
-      returnFlight,
+      departureFlight: {
+        confirmationNo: departureFlight.confirmationNo,
+        airport: departureFlight.airport,
+        city: departureFlight.city,
+        code: departureFlight.code,
+        country: departureFlight.country,
+        date: departureFlight.date,
+        time: departureFlight.time,
+        flightNo: departureFlight.flightNo,
+        name: departureFlight.name,
+        seat: departureFlight.seat,
+        destinationAirport: departureFlight.destinationAirport,
+        destinationCity: departureFlight.destinationCity,
+        destinationCode: departureFlight.destinationCode,
+        destinationCountry: departureFlight.destinationCountry,
+      },
+      returnFlight: {
+        confirmationNo: returnFlight.confirmationNo,
+        airport: returnFlight.airport,
+        city: returnFlight.city,
+        code: returnFlight.code,
+        country: returnFlight.country,
+        date: returnFlight.date,
+        time: returnFlight.time,
+        flightNo: returnFlight.flightNo,
+        name: returnFlight.name,
+        seat: returnFlight.seat,
+      },
     };
-
-    console.log("NEW::::", req.newFlight);
 
     User.findById(req.user._id).then((user) => {
       if (!user)
@@ -117,13 +139,17 @@ flightRouter
       .send(`GET operation not supported on /flights/${req.params.flightId}`);
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    const { isRoundTrip, confirmationNo } = req.body;
+    const { isRoundTrip, nameOnReservation, departureFlight, returnFlight } =
+      req.body;
+
     User.findOneAndUpdate(
       { "trips.flights._id": req.params.flightId },
       {
         $set: {
           "trips.$[i].flights.$[x].isRoundTrip": isRoundTrip,
           "trips.$[i].flights.$[x].nameOnReservation": nameOnReservation,
+          "trips.$[i].flights.$[x].departureFlight": departureFlight,
+          "trips.$[i].flights.$[x].returnFlight": returnFlight,
         },
       },
       {
@@ -152,8 +178,8 @@ flightRouter
             });
 
             res.status(200).json({
-              message: "Success: Flight update saved successfully",
-              updatedFlight,
+              message: "Success: Activity update saved successfully",
+              updatedCruise: updatedFlight,
             });
           })
           .catch((err) => next(err));
@@ -171,32 +197,29 @@ flightRouter
     } else {
       const { flightId } = req.params;
 
-      let flightIndex;
-      let tripIndex;
+      let flightFound = false;
+      let flightIndex = -1;
+      let tripIndex = -1;
 
       req.user.trips.forEach((trip, userTripsIndex) => {
         trip.flights.forEach((flight, index) => {
           if (flight._id.toString() === flightId.toString()) {
             tripIndex = userTripsIndex;
             flightIndex = index;
-            return;
-          } else {
-            return res
-              .status(404)
-              .json({ message: "Flight not found in this trip" });
+            flightFound = true;
           }
         });
       });
 
-      if (flightIndex === -1) {
+      if (!flightFound) {
         return res.status(404).json({ message: "Flight not found" });
       } else {
+        const deletedFlight = req.user.trips[tripIndex].flights[flightIndex];
         req.user.trips[tripIndex].flights.splice(flightIndex, 1);
         req.user.save((err, user) => {
           if (err) {
             return next(err);
           }
-          const deletedFlight = user.trips[tripIndex].flights[flightIndex];
           res.status(200).json(deletedFlight);
         });
       }

@@ -179,6 +179,9 @@ const flightDetailsSchema = new Schema(
     name: {
       type: String,
     },
+    confirmationNo: {
+      type: String,
+    },
     airport: {
       type: String,
     },
