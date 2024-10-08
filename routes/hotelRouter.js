@@ -185,28 +185,29 @@ hotelRouter
     } else {
       const { hotelId } = req.params;
 
-      let hotelIndex;
-      let tripIndex;
+      let hotelFound = false;
+      let hotelIndex = -1;
+      let tripIndex = -1;
 
       req.user.trips.forEach((trip, userTripsIndex) => {
         trip.hotels.forEach((hotel, index) => {
           if (hotel._id.toString() === hotelId.toString()) {
             tripIndex = userTripsIndex;
             hotelIndex = index;
-            return;
+            hotelFound = true;
           }
         });
       });
 
-      if (hotelIndex === -1) {
+      if (!hotelFound) {
         return res.status(404).json({ message: "Hotel not found" });
       } else {
+        const deletedHotel = req.user.trips[tripIndex].hotels[hotelIndex];
         req.user.trips[tripIndex].hotels.splice(hotelIndex, 1);
         req.user.save((err, user) => {
           if (err) {
             return next(err);
           }
-          const deletedHotel = user.trips[tripIndex].hotels[hotelIndex];
           res.status(200).json(deletedHotel);
         });
       }

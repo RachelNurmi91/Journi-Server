@@ -101,6 +101,7 @@ tripRouter
           $set: {
             "trips.$.name": req.body.name,
             "trips.$.startDate": req.body.startDate,
+            "trips.$.endDate": req.body.endDate,
             "trips.$.selections.flights": req.body.selections.flights,
             "trips.$.selections.hotels": req.body.selections.hotels,
             "trips.$.selections.cruise": req.body.selections.cruise,
