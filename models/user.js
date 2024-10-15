@@ -270,7 +270,7 @@ const hotelSchema = new Schema(
     confirmationNo: {
       type: String,
     },
-    city: {
+    address: {
       type: String,
     },
     country: {
