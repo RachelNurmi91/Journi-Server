@@ -5,7 +5,7 @@
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 
 ## Project Summary
-This acts as the server for the [Journi Travel Companion](https://github.com/RachelNurmi91/Journi) Application.
+This acts as the server for the [Journi Travel Companion](https://github.com/RachelNurmi91/Journi) application.
 
 ### Technologies
 Journi relies on the following packages and libraries:
