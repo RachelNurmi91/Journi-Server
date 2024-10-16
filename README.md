@@ -1,5 +1,5 @@
 > [!NOTE]  
-> For more information about the Journi application please check out the client side repo: [here](https://github.com/RachelNurmi91/Journi)
+> Journi is a Fullstack applicaiton. For more information view the client side repo: [click here](https://github.com/RachelNurmi91/Journi)
 
 # Journi Travel Companion Server
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
